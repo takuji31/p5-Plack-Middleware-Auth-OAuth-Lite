@@ -6,9 +6,6 @@ use parent qw/Plack::Authorizer::OAuth::Base/;
 use Plack::Session;
 
 our @REQUIRED_PARAMETERS = qw/
-    opensocial_app_id
-    opensocial_viewer_id
-    opensocial_owner_id
     oauth_consumer_key
     oauth_nonce
     oauth_signature
@@ -31,9 +28,9 @@ sub authorize {
     #parameter check
     map { $do_auth = $do_auth && $req->param($_)} @REQUIRED_PARAMETERS;
 
+    my $session = Plack::Session->new($env);
     unless($do_auth) {
         #get session
-        my $session = Plack::Session->new($env);
         return $session->get($SESSION_KEY);
     }
 
@@ -43,7 +40,7 @@ sub authorize {
 
     map { $params->{$_} = $req_params->{$_} } $req_params->keys;
 
-    return $class->verify_hmac_sha1(
+    my $result = $class->verify_hmac_sha1(
         {
             method          => $req->method,
             url             => $req->uri,
@@ -52,6 +49,12 @@ sub authorize {
             token_secret    => $params->{oauth_token_secret},
         }
     );
+
+    if($result) {
+        #store session
+        $session->set( $SESSION_KEY, $params );
+    }
+    return $result;
 }
 
 1;
