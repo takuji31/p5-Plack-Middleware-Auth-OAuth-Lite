@@ -5,8 +5,9 @@ readme_pod_from 'lib/Plack/Middleware/Auth/OAuth/Lite.pm';
 githubmeta;
 
 # requires '';
-requires 'Plack';
 requires 'OAuth::Lite';
+requires 'Plack';
+requires 'Plack::Request';
 
 tests 't/*.t';
 author_tests 'xt';
