@@ -1,4 +1,4 @@
-package  Plack::Middleware::Auth::OAuth::Lite::Mobile;
+package  Plack::Authorizer::OAuth::Mobile;
 use strict;
 use warnings;
 use parent qw/Plack::Middleware::Auth::OAuth::Lite::Base/;

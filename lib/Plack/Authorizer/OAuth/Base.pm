@@ -1,4 +1,4 @@
-package  Plack::Middleware::Auth::OAuth::Lite::Base;
+package  Plack::Authorizer::OAuth::Base;
 use strict;
 use warnings;
 

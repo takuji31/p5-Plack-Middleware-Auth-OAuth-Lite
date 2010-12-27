@@ -53,8 +53,7 @@ sub call {
 
 sub authorize {
     my ( $self, $env ) = @_;
-    my $class = ref($self);
-    my $agent_class = join '::',$class,$self->agent;
+    my $agent_class = join '::','Plack::Authorizer',$self->agent;
     Plack::Util::load_class($agent_class) or Carp::croak($@);
     my $auth = $agent_class->authorize($self,$env);
 }
@@ -81,11 +80,20 @@ __END__
 
 =head1 NAME
 
-Plack::Middleware::Auth::OAuth::Lite - 
+Plack::Middleware::Auth::OAuth::Lite - Yet another OAuth authorization middleware for PSGI/Plack
 
 =head1 SYNOPSIS
 
-  use Plack::Middleware::Auth::OAuth::Lite;
+use strict;
+use warnings;
+use Plack::Builder;
+
+my $app = sub { #PSGI app };
+
+builder{
+    enable 'Auth::OAuth::Lite', consumer_key => 'abcdefg', consumer_secret => 'hijklmn',validate_post => 0, agent => 'Mobile';
+    $app;
+}
 
 =head1 DESCRIPTION
 
