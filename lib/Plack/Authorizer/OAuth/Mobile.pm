@@ -1,7 +1,7 @@
 package  Plack::Authorizer::OAuth::Mobile;
 use strict;
 use warnings;
-use parent qw/Plack::Middleware::Auth::OAuth::Lite::Base/;
+use parent qw/Plack::Authorizer::OAuth::Base/;
 
 sub authorize {
     my ($class, $middleware, $env) = @_;
