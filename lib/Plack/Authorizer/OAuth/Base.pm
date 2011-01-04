@@ -9,17 +9,18 @@ use OAuth::Lite::Util ();
 sub authorize { die 'This method is abstract!' }
 
 sub create_request {
-    my ($class, $env) = @_;
+    my ( $class, $env ) = @_;
     return Plack::Request->new($env);
 }
 
 sub verify_hmac_sha1 {
-    my ($class, $params) = @_;
-    return verify('HMAC-SHA1',$params);
+    my ( $class, $params ) = @_;
+    return verify( 'HMAC-SHA1', $params );
 }
+
 sub verify_rsa_sha1 {
-    my ($class, $params) = @_;
-    return verify('RSA-SHA1',$params);
+    my ( $class, $params ) = @_;
+    return verify( 'RSA-SHA1', $params );
 }
 
 sub verify {
@@ -30,10 +31,11 @@ sub verify {
 }
 
 sub parse_auth_header {
-    my ($class, $env) = @_;
+    my ( $class, $env ) = @_;
     my $header = $env->{HTTP_AUTHORIZATION};
     return unless $header;
-    return OAuth::Lite::Util::parse_auth_header($header);
+    my ( $r, $params ) = OAuth::Lite::Util::parse_auth_header($header);
+    return $params;
 }
 
 1;
