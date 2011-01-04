@@ -67,7 +67,7 @@ sub unauthorized {
         401,
         [
             'Content-Type' => 'text/plain',
-            'Content-Type' => length $body,
+            'Content-Length' => length $body,
         ],
         [
             $body
