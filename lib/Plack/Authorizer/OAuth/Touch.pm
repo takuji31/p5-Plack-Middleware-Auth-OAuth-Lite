@@ -51,6 +51,8 @@ sub authorize {
     );
 
     if($result) {
+        #regenerate session id
+        $session->options->{change_id}++;
         #store session
         $session->set( $SESSION_KEY, $params );
     }
