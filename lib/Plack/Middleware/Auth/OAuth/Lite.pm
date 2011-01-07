@@ -23,12 +23,12 @@ sub prepare_app {
     my $self = shift;
 
     #check parameter
-    Carp::croak('Parameter "consumer_key" is required')    unless $self->{consumer_key};
-    Carp::croak('Parameter "consumer_secret" is required') unless $self->{consumer_secret};
+    Carp::confess('Parameter "consumer_key" is required')    unless $self->{consumer_key};
+    Carp::confess('Parameter "consumer_secret" is required') unless $self->{consumer_secret};
 
 
     if($self->unauthorized_cb && ref($self->unauthorized_cb) ne 'CODE' ){
-        Carp::croak('Parameter unauthorized_cb should be a code reference');
+        Carp::confess('Parameter unauthorized_cb should be a code reference');
     }else{
         #default callback
         $self->{unauthorized_cb} ||= \&unauthorized;
@@ -38,10 +38,10 @@ sub prepare_app {
     $self->{agent} ||= "AutoDetect";
 
     if($self->check_nonce_cb && ref($self->check_nonce_cb) ne 'CODE' ){
-        Carp::croak('Parameter check_nonce_cb should be a code reference');
+        Carp::confess('Parameter check_nonce_cb should be a code reference');
     }
     if($self->check_timestamp_cb && ref($self->check_timestamp_cb) ne 'CODE' ){
-        Carp::croak('Parameter check_timestamp_cb should be a code reference');
+        Carp::confess('Parameter check_timestamp_cb should be a code reference');
     }
 }
 
@@ -54,7 +54,7 @@ sub call {
 sub authorize {
     my ( $self, $env ) = @_;
     my $agent_class = join '::','Plack::Authorizer::OAuth',$self->agent;
-    Plack::Util::load_class($agent_class) or Carp::croak($@);
+    Plack::Util::load_class($agent_class) or Carp::confess($@);
     my $auth = $agent_class->authorize($self,$env);
 }
 

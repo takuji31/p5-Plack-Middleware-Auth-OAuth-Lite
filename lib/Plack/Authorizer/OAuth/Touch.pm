@@ -36,6 +36,7 @@ sub authorize {
 
     my $params = $class->parse_auth_header($env);
 
+    #XXX get only?
     my $req_params = $middleware->validate_post ? $req->parameters : $req->query_parameters;
 
     map { $params->{$_} = $req_params->{$_} } $req_params->keys;
