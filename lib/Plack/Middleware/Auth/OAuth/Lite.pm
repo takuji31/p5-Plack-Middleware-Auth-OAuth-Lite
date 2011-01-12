@@ -35,7 +35,7 @@ sub prepare_app {
     }
 
     #default Agent
-    $self->{agent} ||= "AutoDetect";
+    $self->{agent} ||= "Mobile";
 
     if($self->check_nonce_cb && ref($self->check_nonce_cb) ne 'CODE' ){
         Carp::confess('Parameter check_nonce_cb should be a code reference');
