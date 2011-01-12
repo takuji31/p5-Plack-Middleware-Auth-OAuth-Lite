@@ -80,7 +80,7 @@ __END__
 
 =head1 NAME
 
-Plack::Middleware::Auth::OAuth::Lite - Yet another OAuth authorization middleware for PSGI/Plack
+Plack::Middleware::Auth::OAuth::Lite - Yet another OAuth authorization middleware for Plack
 
 =head1 SYNOPSIS
 
@@ -97,13 +97,15 @@ builder{
 
 =head1 DESCRIPTION
 
-Plack::Middleware::Auth::OAuth::Lite is
+Plack::Middleware::Auth::OAuth::Lite is Yet another OAuth authorization middleware for Plack
 
 =head1 AUTHOR
 
 Nishibayashi Takuji E<lt>takuji {at} senchan.jpE<gt>
 
 =head1 SEE ALSO
+
+L<Plack::Middleware::Auth::OAuth>,L<Plack::Session>
 
 =head1 LICENSE
 
