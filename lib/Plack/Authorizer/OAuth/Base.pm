@@ -38,4 +38,22 @@ sub parse_auth_header {
     return $params;
 }
 
+sub merge_params {
+    my ( $class, $env, $validate_post, $check_header_is_empty ) = @_;
+    my $req = $class->create_request($env);
+
+    my $auth_params = $class->parse_auth_header($env);
+
+    return unless $auth_params && $check_header_is_empty;
+
+    my $req_params = $validate_post
+        ? $req->parameters->clone
+        : $req->query_parameters->clone;
+
+    while ( my ( $key, $value ) = each %$auth_params ) {
+        $params->add( $key => ref($value) eq 'ARRAY' ? @$value : $value );
+    }
+
+}
+
 1;

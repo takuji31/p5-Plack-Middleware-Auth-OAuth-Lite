@@ -36,16 +36,9 @@ sub authorize {
         return $session->get($SESSION_KEY);
     }
 
-    my $auth_params = $class->parse_auth_header($env);
 
     #XXX get only?
-    my $params = $middleware->validate_post
-        ? $req->parameters->clone
-        : $req->query_parameters->clone;
-
-    while ( my ( $key, $value ) = each %$auth_params ) {
-        $params->add( $key => ref($value) eq 'ARRAY' ? @$value : $value );
-    }
+    my $params = $class->merge_params($env,$middleware->validate_post,0);
 
     my $result = $class->verify_hmac_sha1(
         {
