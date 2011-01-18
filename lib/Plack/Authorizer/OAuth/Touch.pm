@@ -44,15 +44,7 @@ sub authorize {
         : $req->query_parameters->clone;
 
     while ( my ( $key, $value ) = each %$auth_params ) {
-        if ( ref($value) eq 'ARRAY' ) {
-            for my $v (@$value) {
-                $params->add( $key => $v );
-            }
-        }
-        else {
-            $params->add( $key => $value );
-        }
-
+        $params->add( $key => ref($value) eq 'ARRAY' ? @$value : $value );
     }
 
     my $result = $class->verify_hmac_sha1(
