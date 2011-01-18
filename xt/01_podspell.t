@@ -8,3 +8,6 @@ __DATA__
 Nishibayashi Takuji
 takuji {at} senchan.jp
 Plack::Middleware::Auth::OAuth::Lite
+middleware
+app
+abcdefg

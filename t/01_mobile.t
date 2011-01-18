@@ -1,0 +1,35 @@
+use t::Utils;
+use Test::More;
+use Plack::Test;
+use Plack::Builder;
+use HTTP::Request::Common;
+
+my $consumer_key    = 'abcdefg';
+my $consumer_secret = 'hijklmn';
+my $consumer        = create_consumer( $consumer_key, $consumer_secret );
+my $app             = create_app;
+my $params          = {
+    oauth_version          => '1.0',
+    oauth_signature_method => 'HMAC-SHA1',
+    oauth_consumer_key     => $consumer_key,
+};
+
+test_psgi builder{
+    enable 'Plack::Middleware::Auth::OAuth::Lite', consumer_key => $consumer_key,consumer_secret => $consumer_secret, agent => 'Mobile';
+    $app;
+},sub {
+    my $cb = shift;
+    my $res = $cb->(GET "http://localhost/");
+    is $res->code, 401;
+
+    my $req = $consumer->gen_oauth_request(
+        method => 'GET',
+        url    => 'http://localhost/',
+        params => $params,
+    );
+    $res = $cb->($req);
+    is $res->code, 200;
+    is $res->content,"Hello Plack World";
+};
+
+done_testing;
