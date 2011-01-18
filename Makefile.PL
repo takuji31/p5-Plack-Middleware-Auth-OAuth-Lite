@@ -7,7 +7,6 @@ githubmeta;
 # requires '';
 requires 'OAuth::Lite';
 requires 'Plack';
-requires 'Plack::Request';
 
 tests 't/*.t';
 author_tests 'xt';
