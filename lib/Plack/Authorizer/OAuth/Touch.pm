@@ -38,7 +38,7 @@ sub authorize {
 
 
     #XXX get only?
-    my $params = $class->merge_params($env,$middleware->validate_post,0);
+    my $params = $class->merge_params($env,$middleware->validate_post,1);
 
     my $result = $class->verify_hmac_sha1(
         {

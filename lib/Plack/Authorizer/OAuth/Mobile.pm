@@ -6,7 +6,7 @@ use parent qw/Plack::Authorizer::OAuth::Base/;
 sub authorize {
     my ($class, $middleware, $env) = @_;
 
-    my $params = $class->merge_params($env,$middleware->validate_post,1);
+    my $params = $class->merge_params($env,$middleware->validate_post,0);
 
     return unless $params;
 

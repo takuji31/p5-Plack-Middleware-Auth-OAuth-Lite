@@ -39,12 +39,12 @@ sub parse_auth_header {
 }
 
 sub merge_params {
-    my ( $class, $env, $validate_post, $check_header_is_empty ) = @_;
+    my ( $class, $env, $validate_post, $pass_header_check ) = @_;
     my $req = $class->create_request($env);
 
     my $auth_params = $class->parse_auth_header($env);
 
-    return unless $auth_params && $check_header_is_empty;
+    return unless $auth_params || $pass_header_check;
 
     my $req_params = $validate_post
         ? $req->parameters->clone
