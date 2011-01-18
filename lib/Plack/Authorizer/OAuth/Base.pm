@@ -51,9 +51,9 @@ sub merge_params {
         : $req->query_parameters->clone;
 
     while ( my ( $key, $value ) = each %$auth_params ) {
-        $params->add( $key => ref($value) eq 'ARRAY' ? @$value : $value );
+        $req_params->add( $key => ref($value) eq 'ARRAY' ? @$value : $value );
     }
-
+    return $req_params;
 }
 
 1;
