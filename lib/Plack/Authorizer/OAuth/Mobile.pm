@@ -10,6 +10,8 @@ sub authorize {
 
     return unless $params;
 
+    my $req = $class->create_request($env);
+
     return $class->verify_hmac_sha1(
         {
             method          => $req->method,

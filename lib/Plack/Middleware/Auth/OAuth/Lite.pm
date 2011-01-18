@@ -55,7 +55,7 @@ sub authorize {
     my ( $self, $env ) = @_;
     my $agent_class = join '::','Plack::Authorizer::OAuth',$self->agent;
     Plack::Util::load_class($agent_class) or Carp::confess($@);
-    my $auth = $agent_class->authorize($self,$env);
+    $agent_class->authorize($self,$env);
 }
 
 sub unauthorized {
