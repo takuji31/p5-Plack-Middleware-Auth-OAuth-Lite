@@ -4,16 +4,16 @@ Plack::Middleware::Auth::OAuth::Lite - Yet another OAuth authorization middlewar
 
 =head1 SYNOPSIS
 
-use strict;
-use warnings;
-use Plack::Builder;
-
-my $app = sub { #PSGI app };
-
-builder{
-    enable 'Auth::OAuth::Lite', consumer_key => 'abcdefg', consumer_secret => 'hijklmn',validate_post => 0, agent => 'Mobile';
-    $app;
-}
+  use strict;
+  use warnings;
+  use Plack::Builder;
+  
+  my $app = sub { #PSGI app };
+  
+  builder{
+      enable 'Auth::OAuth::Lite', consumer_key => 'abcdefg', consumer_secret => 'hijklmn';
+      $app;
+  }
 
 =head1 DESCRIPTION
 
