@@ -60,6 +60,13 @@ sub prepare_app {
     if($self->check_timestamp_callback && ref($self->check_timestamp_callback) ne 'CODE' ){
         Carp::confess('Parameter check_timestamp_callback should be a code reference');
     }
+    # merge default parameters
+    $self->get_params_from(
+        {
+            %$DEFAULT_GET_PARAMS_FROM,
+            %{$self->get_params_from || {}},
+        }
+    );
 }
 
 sub call {
