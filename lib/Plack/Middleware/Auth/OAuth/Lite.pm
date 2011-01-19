@@ -3,8 +3,8 @@ use strict;
 use warnings;
 use OAuth::Lite;
 use Carp();
-use parent qw/Plack::Middleware/;
-
+use Plack::Request;
+use Plack::Session;
 use Plack::Util();
 use Plack::Util::Accessor qw/
     consumer_key
@@ -15,6 +15,7 @@ use Plack::Util::Accessor qw/
     check_nonce_callback
 /;
 
+use parent qw/Plack::Middleware/;
 
 our $VERSION = '0.01';
 
@@ -45,11 +46,11 @@ sub prepare_app {
     Carp::confess('Parameter "consumer_secret" is required') unless $self->{consumer_secret};
 
 
-    if($self->unauthorized_cb && ref($self->unauthorized_cb) ne 'CODE' ){
-        Carp::confess('Parameter unauthorized_cb should be a code reference');
+    if($self->unauthorized_callback && ref($self->unauthorized_callback) ne 'CODE' ){
+        Carp::confess('Parameter unauthorized_callback should be a code reference');
     }else{
         #default callback
-        $self->{unauthorized_cb} ||= \&unauthorized;
+        $self->{unauthorized_callback} ||= \&unauthorized;
     }
 
     #default Agent
@@ -66,7 +67,7 @@ sub prepare_app {
 sub call {
     my ( $self, $env ) = @_;
 
-    return $self->authorize($env) ? $self->app->($env) : $self->unauthorized_cb->($env);
+    return $self->authorize($env) ? $self->app->($env) : $self->unauthorized_callback->($env);
 }
 
 sub authorize {
