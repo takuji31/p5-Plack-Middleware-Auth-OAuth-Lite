@@ -89,15 +89,15 @@ sub authorize {
     #XXX get only?
     my $params = $self->merge_params;
 
-    return unless $self->check_parameters( $params );
+    return unless $self->check_parameters( $params ) || !$self->get_params_from->{oauth_header};
 
     if ( $self->get_params_from->{session} ) {
 
-        my $skip_auth = 1;
+        my $skip_auth = 0;
         #parameter check
         for my $param_name ( @REQUIRED_PARAMETERS ) {
             unless ( defined $params->get($param_name) ) {
-                $skip_auth = 0;
+                $skip_auth = 1;
             }
         }
 
@@ -127,7 +127,7 @@ sub authorize {
         $session->options->{change_id}++;
 
         #store session
-        $session->set( $SESSION_KEY, $params );
+        $session->set( $SESSION_KEY, $params->as_hashref_mixed );
     }
     return $result;
 }
