@@ -153,16 +153,6 @@ sub create_request {
     return Plack::Request->new($env);
 }
 
-sub verify_hmac_sha1 {
-    my ( $self, $params ) = @_;
-    return verify( 'HMAC-SHA1', $params );
-}
-
-sub verify_rsa_sha1 {
-    my ( $self, $params ) = @_;
-    return verify( 'RSA-SHA1', $params );
-}
-
 sub verify {
     my ( $self, $method, $params ) = @_;
     my $oauth = OAuth::Lite::ServerUtil->new( strict => 0 );
