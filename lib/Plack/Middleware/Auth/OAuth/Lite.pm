@@ -7,12 +7,13 @@ use Plack::Request;
 use Plack::Session;
 use Plack::Util();
 use Plack::Util::Accessor qw/
-    consumer_key
-    consumer_secret
-    get_params_from
-    unauthorized_callback
     check_timestamp_callback
     check_nonce_callback
+    consumer_key
+    consumer_secret
+    env
+    get_params_from
+    unauthorized_callback
 /;
 
 use parent qw/Plack::Middleware/;
@@ -69,6 +70,8 @@ sub call {
 
 sub authorize {
     my ( $self, $env ) = @_;
+
+    $self->{env} = $env;
 
     my $req = $self->create_request($env);
 
