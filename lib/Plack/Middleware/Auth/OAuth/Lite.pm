@@ -36,11 +36,11 @@ sub prepare_app {
     #default Agent
     $self->{agent} ||= "Mobile";
 
-    if($self->check_nonce_cb && ref($self->check_nonce_cb) ne 'CODE' ){
-        Carp::confess('Parameter check_nonce_cb should be a code reference');
+    if($self->check_nonce_callback && ref($self->check_nonce_callback) ne 'CODE' ){
+        Carp::confess('Parameter check_nonce_callback should be a code reference');
     }
-    if($self->check_timestamp_cb && ref($self->check_timestamp_cb) ne 'CODE' ){
-        Carp::confess('Parameter check_timestamp_cb should be a code reference');
+    if($self->check_timestamp_callback && ref($self->check_timestamp_callback) ne 'CODE' ){
+        Carp::confess('Parameter check_timestamp_callback should be a code reference');
     }
 }
 
@@ -78,7 +78,7 @@ sub authorize {
     #XXX get only?
     my $params = $class->merge_params($env,$middleware->validate_post,1);
 
-    return unless $class->check_parameters( $params, $middleware->consumer_key, $middleware->check_timestamp_cb, $middleware->check_nonce_cb );
+    return unless $class->check_parameters( $params, $middleware->consumer_key, $middleware->check_timestamp_callback, $middleware->check_nonce_callback );
 
     my $result = $class->verify_hmac_sha1(
         {
@@ -140,11 +140,11 @@ sub verify {
 }
 
 sub check_parameters {
-    my ( $class, $params, $consumer_key, $check_timestamp_cb, $check_nonce_cb ) = @_;
+    my ( $class, $params, $consumer_key, $check_timestamp_callback, $check_nonce_callback ) = @_;
 
     return unless $params->{oauth_consumer_key} eq $consumer_key;
-    return if $check_timestamp_cb && !$check_timestamp_cb->($params);
-    return if $check_nonce_cb && !$check_nonce_cb->($params);
+    return if $check_timestamp_callback && !$check_timestamp_callback->($params);
+    return if $check_nonce_callback && !$check_nonce_callback->($params);
 
     return 1;
 }
