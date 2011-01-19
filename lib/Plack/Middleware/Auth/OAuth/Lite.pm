@@ -84,7 +84,8 @@ sub authorize {
 
     my $do_auth = 1;
 
-    if($self->get_params_from->{session}) {
+    if ( $self->get_params_from->{session} ) {
+
         #parameter check
         map { $do_auth = $do_auth && $req->param($_) } @REQUIRED_PARAMETERS;
 
@@ -98,7 +99,7 @@ sub authorize {
 
 
     #XXX get only?
-    my $params = $self->merge_params($env,$self->validate_post,1);
+    my $params = $self->merge_params;
 
     return unless $self->check_parameters( $params, $self->consumer_key, $self->check_timestamp_callback, $self->check_nonce_callback );
 
@@ -181,14 +182,15 @@ sub parse_auth_header {
 }
 
 sub merge_params {
-    my ( $self, $env, $validate_post, $pass_header_check ) = @_;
-    my $req = $self->create_request($env);
+    my $self = shift;
 
-    my $auth_params = $self->parse_auth_header($env);
+    my $req = $self->req;
 
-    return unless $auth_params || $pass_header_check;
+    my $auth_params = $self->parse_auth_header($self->env);
 
-    my $req_params = $validate_post
+    return unless $auth_params || !$self->get_params_from->{oauth_header};
+
+    my $req_params = $self->get_params_from->{post_body}
         ? $req->parameters->clone
         : $req->query_parameters->clone;
 
