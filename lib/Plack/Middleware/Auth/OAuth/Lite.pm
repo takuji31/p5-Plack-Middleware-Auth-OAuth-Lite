@@ -84,13 +84,16 @@ sub authorize {
 
     my $do_auth = 1;
 
-    #parameter check
-    map { $do_auth = $do_auth && $req->param($_) } @REQUIRED_PARAMETERS;
+    if($self->get_params_from->{session}) {
+        #parameter check
+        map { $do_auth = $do_auth && $req->param($_) } @REQUIRED_PARAMETERS;
 
-    unless ($do_auth) {
+        my $session = $self->session;
+        unless ($do_auth) {
 
-        #get session
-        return $self->session->get($SESSION_KEY);
+            #get session
+            return $session->get($SESSION_KEY);
+        }
     }
 
 
@@ -109,8 +112,9 @@ sub authorize {
         }
     );
 
-    if ($result) {
+    if ($result && $self->get_params_from->{session}) {
 
+        my $session = $self->session;
         #regenerate session id
         $session->options->{change_id}++;
 
