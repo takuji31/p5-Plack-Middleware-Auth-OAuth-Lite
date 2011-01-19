@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use OAuth::Lite;
 use Carp();
+use OAuth::Lite::Util ();
+use OAuth::Lite::ServerUtil;
 use Plack::Request;
 use Plack::Session;
 use Plack::Util();
