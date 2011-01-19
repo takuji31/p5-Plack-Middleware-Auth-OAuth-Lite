@@ -4,14 +4,13 @@ use Plack::Test;
 use Plack::Builder;
 use HTTP::Request::Common;
 
-my $consumer_key    = 'abcdefg';
-my $consumer_secret = 'hijklmn';
+my $consumer_key    = 'correctconsumerkey';
+my $consumer_secret = 'correctconsumersecret';
 my $consumer        = create_consumer( $consumer_key, $consumer_secret );
 my $app             = create_app;
 my $params          = {
     oauth_version          => '1.0',
     oauth_signature_method => 'HMAC-SHA1',
-    oauth_consumer_key     => $consumer_key,
 };
 
 test_psgi builder{
@@ -30,6 +29,34 @@ test_psgi builder{
     $res = $cb->($req);
     is $res->code, 200;
     is $res->content,"Hello Plack World";
+};
+
+test_psgi builder{
+    enable 'Plack::Middleware::Auth::OAuth::Lite', consumer_key => 'wrongconsumerkey',consumer_secret => $consumer_secret, agent => 'Mobile';
+    $app;
+},sub {
+    my $cb = shift;
+    my $req = $consumer->gen_oauth_request(
+        method => 'GET',
+        url    => 'http://localhost/',
+        params => $params,
+    );
+    my $res = $cb->($req);
+    is $res->code, 401;
+};
+
+test_psgi builder{
+    enable 'Plack::Middleware::Auth::OAuth::Lite', consumer_key => $consumer_key,consumer_secret => 'wrongconsumersecret', agent => 'Mobile';
+    $app;
+},sub {
+    my $cb = shift;
+    my $req = $consumer->gen_oauth_request(
+        method => 'GET',
+        url    => 'http://localhost/',
+        params => $params,
+    );
+    my $res = $cb->($req);
+    is $res->code, 401;
 };
 
 done_testing;
