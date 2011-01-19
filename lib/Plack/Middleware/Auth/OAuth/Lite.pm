@@ -80,18 +80,17 @@ sub authorize {
 
     $self->{env} = $env;
 
-    my $req = $self->create_request($env);
+    my $req = $self->req;
 
     my $do_auth = 1;
 
     #parameter check
     map { $do_auth = $do_auth && $req->param($_) } @REQUIRED_PARAMETERS;
 
-    my $session = Plack::Session->new($env);
     unless ($do_auth) {
 
         #get session
-        return $session->get($SESSION_KEY);
+        return $self->session->get($SESSION_KEY);
     }
 
 
@@ -193,6 +192,15 @@ sub merge_params {
         $req_params->add( $key => ref($value) eq 'ARRAY' ? @$value : $value );
     }
     return $req_params;
+}
+
+sub session {
+    my $self = shift;
+    $self->{session} ||= Plack::Session->new($self->env);
+}
+sub req {
+    my $self = shift;
+    $self->{req} ||= Plack::Request->new($self->env);
 }
 
 1;
