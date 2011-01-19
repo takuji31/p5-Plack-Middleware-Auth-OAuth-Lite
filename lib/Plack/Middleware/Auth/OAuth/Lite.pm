@@ -18,6 +18,13 @@ use Plack::Util::Accessor qw/
 
 our $VERSION = '0.01';
 
+our $DEFAULT_GET_PARAMS_FROM = {
+    post_body       => 0,
+    session         => 0,
+    oauth_header    => 1,
+    query_parameter => 1,
+};
+
 sub prepare_app {
     my $self = shift;
 
