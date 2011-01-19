@@ -103,7 +103,7 @@ sub authorize {
     #XXX get only?
     my $params = $self->merge_params;
 
-    return unless $self->check_parameters( $params, $self->consumer_key, $self->check_timestamp_callback, $self->check_nonce_callback );
+    return unless $self->check_parameters( $params );
 
     my $result = $self->verify_hmac_sha1(
         {
@@ -166,11 +166,11 @@ sub verify {
 }
 
 sub check_parameters {
-    my ( $self, $params, $consumer_key, $check_timestamp_callback, $check_nonce_callback ) = @_;
+    my ( $self, $params ) = @_;
 
-    return unless $params->{oauth_consumer_key} eq $consumer_key;
-    return if $check_timestamp_callback && !$check_timestamp_callback->($params);
-    return if $check_nonce_callback && !$check_nonce_callback->($params);
+    return unless $params->{oauth_consumer_key} && $params->{oauth_consumer_key} eq $self->consumer_key;
+    return if $self->check_timestamp_callback && !$self->check_timestamp_callback->($params);
+    return if $self->check_nonce_callback && !$self->check_nonce_callback->($params);
 
     return 1;
 }
