@@ -53,9 +53,6 @@ sub prepare_app {
         $self->{unauthorized_callback} ||= \&unauthorized;
     }
 
-    #default Agent
-    $self->{agent} ||= "Mobile";
-
     if($self->check_nonce_callback && ref($self->check_nonce_callback) ne 'CODE' ){
         Carp::confess('Parameter check_nonce_callback should be a code reference');
     }
