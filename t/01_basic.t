@@ -11,10 +11,11 @@ my $app             = create_app;
 my $params          = {
     oauth_version          => '1.0',
     oauth_signature_method => 'HMAC-SHA1',
+    oauth_token            => 'aaaaaaa',
 };
 
 test_psgi builder{
-    enable 'Plack::Middleware::Auth::OAuth::Lite', consumer_key => $consumer_key,consumer_secret => $consumer_secret, agent => 'Mobile';
+    enable 'Plack::Middleware::Auth::OAuth::Lite', consumer_key => $consumer_key,consumer_secret => $consumer_secret;
     $app;
 },sub {
     my $cb = shift;
@@ -32,7 +33,7 @@ test_psgi builder{
 };
 
 test_psgi builder{
-    enable 'Plack::Middleware::Auth::OAuth::Lite', consumer_key => 'wrongconsumerkey',consumer_secret => $consumer_secret, agent => 'Mobile';
+    enable 'Plack::Middleware::Auth::OAuth::Lite', consumer_key => 'wrongconsumerkey',consumer_secret => $consumer_secret;
     $app;
 },sub {
     my $cb = shift;
@@ -46,7 +47,7 @@ test_psgi builder{
 };
 
 test_psgi builder{
-    enable 'Plack::Middleware::Auth::OAuth::Lite', consumer_key => $consumer_key,consumer_secret => 'wrongconsumersecret', agent => 'Mobile';
+    enable 'Plack::Middleware::Auth::OAuth::Lite', consumer_key => $consumer_key,consumer_secret => 'wrongconsumersecret';
     $app;
 },sub {
     my $cb = shift;
