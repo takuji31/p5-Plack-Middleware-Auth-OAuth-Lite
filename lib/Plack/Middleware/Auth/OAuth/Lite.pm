@@ -35,6 +35,8 @@ our @REQUIRED_PARAMETERS = qw/
     oauth_token
 /;
 
+our $SESSION_KEY = 'oauth_session_params';
+
 sub prepare_app {
     my $self = shift;
 
@@ -70,7 +72,7 @@ sub call {
 sub authorize {
     my ( $self, $env ) = @_;
 
-    my $req = $class->create_request($env);
+    my $req = $self->create_request($env);
 
     my $do_auth = 1;
 
@@ -86,11 +88,11 @@ sub authorize {
 
 
     #XXX get only?
-    my $params = $class->merge_params($env,$self->validate_post,1);
+    my $params = $self->merge_params($env,$self->validate_post,1);
 
-    return unless $class->check_parameters( $params, $self->consumer_key, $self->check_timestamp_callback, $self->check_nonce_callback );
+    return unless $self->check_parameters( $params, $self->consumer_key, $self->check_timestamp_callback, $self->check_nonce_callback );
 
-    my $result = $class->verify_hmac_sha1(
+    my $result = $self->verify_hmac_sha1(
         {
             method          => $req->method,
             url             => $req->uri,
@@ -128,17 +130,17 @@ sub unauthorized {
 }
 
 sub create_request {
-    my ( $class, $env ) = @_;
+    my ( $self, $env ) = @_;
     return Plack::Request->new($env);
 }
 
 sub verify_hmac_sha1 {
-    my ( $class, $params ) = @_;
+    my ( $self, $params ) = @_;
     return verify( 'HMAC-SHA1', $params );
 }
 
 sub verify_rsa_sha1 {
-    my ( $class, $params ) = @_;
+    my ( $self, $params ) = @_;
     return verify( 'RSA-SHA1', $params );
 }
 
@@ -150,7 +152,7 @@ sub verify {
 }
 
 sub check_parameters {
-    my ( $class, $params, $consumer_key, $check_timestamp_callback, $check_nonce_callback ) = @_;
+    my ( $self, $params, $consumer_key, $check_timestamp_callback, $check_nonce_callback ) = @_;
 
     return unless $params->{oauth_consumer_key} eq $consumer_key;
     return if $check_timestamp_callback && !$check_timestamp_callback->($params);
@@ -160,7 +162,7 @@ sub check_parameters {
 }
 
 sub parse_auth_header {
-    my ( $class, $env ) = @_;
+    my ( $self, $env ) = @_;
     my $header = $env->{HTTP_AUTHORIZATION};
     return unless $header;
     my ( $r, $params ) = OAuth::Lite::Util::parse_auth_header($header);
@@ -168,10 +170,10 @@ sub parse_auth_header {
 }
 
 sub merge_params {
-    my ( $class, $env, $validate_post, $pass_header_check ) = @_;
-    my $req = $class->create_request($env);
+    my ( $self, $env, $validate_post, $pass_header_check ) = @_;
+    my $req = $self->create_request($env);
 
-    my $auth_params = $class->parse_auth_header($env);
+    my $auth_params = $self->parse_auth_header($env);
 
     return unless $auth_params || $pass_header_check;
 
