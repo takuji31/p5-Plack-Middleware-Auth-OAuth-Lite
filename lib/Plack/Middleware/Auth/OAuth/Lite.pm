@@ -174,8 +174,8 @@ sub check_parameters {
 }
 
 sub parse_auth_header {
-    my ( $self, $env ) = @_;
-    my $header = $env->{HTTP_AUTHORIZATION};
+    my $self = shift;
+    my $header = $self->env->{HTTP_AUTHORIZATION};
     return unless $header;
     my ( $r, $params ) = OAuth::Lite::Util::parse_auth_header($header);
     return $params;
@@ -186,7 +186,7 @@ sub merge_params {
 
     my $req = $self->req;
 
-    my $auth_params = $self->parse_auth_header($self->env);
+    my $auth_params = $self->parse_auth_header;
 
     return unless $auth_params || !$self->get_params_from->{oauth_header};
 
