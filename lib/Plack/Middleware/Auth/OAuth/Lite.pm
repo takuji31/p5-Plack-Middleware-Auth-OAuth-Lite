@@ -84,20 +84,6 @@ sub authorize {
 
     my $req = $self->req;
 
-    my $do_auth = 1;
-
-    if ( $self->get_params_from->{session} ) {
-
-        #parameter check
-        map { $do_auth = $do_auth && $req->param($_) } @REQUIRED_PARAMETERS;
-
-        my $session = $self->session;
-        unless ($do_auth) {
-
-            #get session
-            return $session->get($SESSION_KEY);
-        }
-    }
 
 
     #XXX get only?
@@ -105,7 +91,26 @@ sub authorize {
 
     return unless $self->check_parameters( $params );
 
-    my $result = $self->verify_hmac_sha1(
+    if ( $self->get_params_from->{session} ) {
+
+        my $skip_auth = 1;
+        #parameter check
+        for my $param_name ( @REQUIRED_PARAMETERS ) {
+            unless ( defined $params->get($param_name) ) {
+                $skip_auth = 0;
+            }
+        }
+
+        my $session = $self->session;
+        if ($skip_auth) {
+
+            #get session
+            return $session->get($SESSION_KEY);
+        }
+    }
+
+
+    my $result = $self->verify( $params->get('oauth_signature_method'),
         {
             method          => $req->method,
             url             => $req->uri,
@@ -159,7 +164,7 @@ sub verify_rsa_sha1 {
 }
 
 sub verify {
-    my ( $method, $params ) = @_;
+    my ( $self, $method, $params ) = @_;
     my $oauth = OAuth::Lite::ServerUtil->new( strict => 0 );
     $oauth->support_signature_method($method);
     return $oauth->verify_signature(%$params);
