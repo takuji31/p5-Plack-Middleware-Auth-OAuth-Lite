@@ -52,13 +52,6 @@ sub call {
 
 sub authorize {
     my ( $self, $env ) = @_;
-    my $agent_class = join '::','Plack::Authorizer::OAuth',$self->agent;
-    Plack::Util::load_class($agent_class) or Carp::confess($@);
-    $agent_class->authorize($self,$env);
-}
-
-sub authorize {
-    my ( $class, $middleware, $env ) = @_;
 
     my $req = $class->create_request($env);
 
@@ -76,16 +69,16 @@ sub authorize {
 
 
     #XXX get only?
-    my $params = $class->merge_params($env,$middleware->validate_post,1);
+    my $params = $class->merge_params($env,$self->validate_post,1);
 
-    return unless $class->check_parameters( $params, $middleware->consumer_key, $middleware->check_timestamp_callback, $middleware->check_nonce_callback );
+    return unless $class->check_parameters( $params, $self->consumer_key, $self->check_timestamp_callback, $self->check_nonce_callback );
 
     my $result = $class->verify_hmac_sha1(
         {
             method          => $req->method,
             url             => $req->uri,
             params          => $params->as_hashref_mixed,
-            consumer_secret => $middleware->consumer_secret,
+            consumer_secret => $self->consumer_secret,
             token_secret    => $params->{oauth_token_secret},
         }
     );
