@@ -25,6 +25,16 @@ our $DEFAULT_GET_PARAMS_FROM = {
     query_parameter => 1,
 };
 
+our @REQUIRED_PARAMETERS = qw/
+    oauth_consumer_key
+    oauth_signature_method
+    oauth_signature
+    oauth_timestamp
+    oauth_nonce
+    oauth_version
+    oauth_token
+/;
+
 sub prepare_app {
     my $self = shift;
 
