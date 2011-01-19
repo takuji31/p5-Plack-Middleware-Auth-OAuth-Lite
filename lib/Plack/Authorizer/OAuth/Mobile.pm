@@ -10,6 +10,8 @@ sub authorize {
 
     return unless $params;
 
+    return unless $class->check_parameters( $params, $middleware->consumer_key, $middleware->check_timestamp_cb, $middleware->check_nonce_cb );
+
     my $req = $class->create_request($env);
 
     return $class->verify_hmac_sha1(

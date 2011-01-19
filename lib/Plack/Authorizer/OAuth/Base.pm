@@ -30,6 +30,16 @@ sub verify {
     return $oauth->verify_signature(%$params);
 }
 
+sub check_parameters {
+    my ( $class, $params, $consumer_key, $check_timestamp_cb, $check_nonce_cb ) = @_;
+
+    return unless $params->{oauth_consumer_key} eq $consumer_key;
+    return if $check_timestamp_cb && !$check_timestamp_cb->($params);
+    return if $check_nonce_cb && !$check_nonce_cb->($params);
+
+    return 1;
+}
+
 sub parse_auth_header {
     my ( $class, $env ) = @_;
     my $header = $env->{HTTP_AUTHORIZATION};

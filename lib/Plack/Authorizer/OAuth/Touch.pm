@@ -40,6 +40,8 @@ sub authorize {
     #XXX get only?
     my $params = $class->merge_params($env,$middleware->validate_post,1);
 
+    return unless $class->check_parameters( $params, $middleware->consumer_key, $middleware->check_timestamp_cb, $middleware->check_nonce_cb );
+
     my $result = $class->verify_hmac_sha1(
         {
             method          => $req->method,
