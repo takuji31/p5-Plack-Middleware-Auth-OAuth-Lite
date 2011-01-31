@@ -23,16 +23,6 @@ Plack::Middleware::Auth::OAuth::Lite - Yet another OAuth authorization middlewar
           };
       $app;
   }
-  #Get all authentication parameters from the query parameter.
-  #And if you skip the authentication credentials in the session.
-  builder{
-      enable 'Auth::OAuth::Lite', consumer_key => 'abcdefg', consumer_secret => 'hijklmn',
-          get_params_from => {
-              oauth_header => 0,
-              session      => 1,
-          };
-      $app;
-  }
 
 =head1 DESCRIPTION
 
