@@ -76,7 +76,10 @@ sub authorize {
 
     return unless $self->check_parameters( $params ) || !$self->get_params_from->{oauth_header};
 
-    my $result = $self->verify( $params->get('oauth_signature_method'),
+    my $signature_method = $params->get('oauth_signature_method');
+    return unless $signature_method;
+
+    my $result = $self->verify( $signature_method,
         {
             method          => $req->method,
             url             => $req->uri,
@@ -121,7 +124,6 @@ sub check_parameters {
     my ( $self, $params ) = @_;
 
     return unless $params;
-    return unless $params->get('oauth_signature_method');
     return unless $params->{oauth_consumer_key} && $params->{oauth_consumer_key} eq $self->consumer_key;
     return if $self->check_timestamp_callback && !$self->check_timestamp_callback->($params);
     return if $self->check_nonce_callback && !$self->check_nonce_callback->($params);
