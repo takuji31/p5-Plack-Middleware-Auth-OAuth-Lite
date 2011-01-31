@@ -61,7 +61,7 @@ sub prepare_app {
 sub call {
     my ( $self, $env ) = @_;
 
-    return $self->authorize($env) ? $self->app->($env) : $self->unauthorized_callback->($env);
+    return $self->authorize($env) ? $self->app->($env) : $self->unauthorized_callback->($self,$env);
 }
 
 sub authorize {
