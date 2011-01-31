@@ -24,22 +24,9 @@ our $VERSION = '0.01';
 
 our $DEFAULT_GET_PARAMS_FROM = {
     post_body       => 0,
-    session         => 0,
     oauth_header    => 1,
     query_parameter => 1,
 };
-
-our @REQUIRED_PARAMETERS = qw/
-    oauth_consumer_key
-    oauth_signature_method
-    oauth_signature
-    oauth_timestamp
-    oauth_nonce
-    oauth_version
-    oauth_token
-/;
-
-our $SESSION_KEY = 'oauth_session_params';
 
 sub prepare_app {
     my $self = shift;
@@ -84,31 +71,10 @@ sub authorize {
 
     my $req = $self->req;
 
-
-
     #XXX get only?
     my $params = $self->merge_params;
 
     return unless $self->check_parameters( $params ) || !$self->get_params_from->{oauth_header};
-
-    if ( $self->get_params_from->{session} ) {
-
-        my $skip_auth = 0;
-        #parameter check
-        for my $param_name ( @REQUIRED_PARAMETERS ) {
-            unless ( defined $params->get($param_name) ) {
-                $skip_auth = 1;
-            }
-        }
-
-        my $session = $self->session;
-        if ($skip_auth) {
-
-            #get session
-            return $session->get($SESSION_KEY);
-        }
-    }
-
 
     my $result = $self->verify( $params->get('oauth_signature_method'),
         {
@@ -120,15 +86,6 @@ sub authorize {
         }
     );
 
-    if ($result && $self->get_params_from->{session}) {
-
-        my $session = $self->session;
-        #regenerate session id
-        $session->options->{change_id}++;
-
-        #store session
-        $session->set( $SESSION_KEY, $params->as_hashref_mixed );
-    }
     return $result;
 }
 sub unauthorized {
@@ -163,6 +120,7 @@ sub verify {
 sub check_parameters {
     my ( $self, $params ) = @_;
 
+    return unless $params->get('oauth_signature_method');
     return unless $params->{oauth_consumer_key} && $params->{oauth_consumer_key} eq $self->consumer_key;
     return if $self->check_timestamp_callback && !$self->check_timestamp_callback->($params);
     return if $self->check_nonce_callback && !$self->check_nonce_callback->($params);
@@ -197,10 +155,6 @@ sub merge_params {
     return $req_params;
 }
 
-sub session {
-    my $self = shift;
-    $self->{session} ||= Plack::Session->new($self->env);
-}
 sub req {
     my $self = shift;
     $self->{req} ||= Plack::Request->new($self->env);
@@ -231,16 +185,6 @@ Plack::Middleware::Auth::OAuth::Lite - Yet another OAuth authorization middlewar
       enable 'Auth::OAuth::Lite', consumer_key => 'abcdefg', consumer_secret => 'hijklmn',
           get_params_from => {
               oauth_header => 0,
-          };
-      $app;
-  }
-  #Get all authentication parameters from the query parameter.
-  #And if you skip the authentication credentials in the session.
-  builder{
-      enable 'Auth::OAuth::Lite', consumer_key => 'abcdefg', consumer_secret => 'hijklmn',
-          get_params_from => {
-              oauth_header => 0,
-              session      => 1,
           };
       $app;
   }
