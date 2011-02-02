@@ -74,8 +74,7 @@ sub authorize {
     #XXX get only?
     my $params = $self->merge_params;
 
-    return unless $params;
-    return unless $self->check_parameters( $params ) || !$self->get_params_from->{oauth_header};
+    return unless $self->check_parameters( $params );
 
     my $signature_method = $params->get('oauth_signature_method');
     return unless $signature_method;
