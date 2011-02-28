@@ -6,7 +6,6 @@ use Carp();
 use OAuth::Lite::Util ();
 use OAuth::Lite::ServerUtil;
 use Plack::Request;
-use Plack::Session;
 use Plack::Util();
 use Plack::Util::Accessor qw/
     check_timestamp_callback
@@ -202,7 +201,7 @@ Nishibayashi Takuji E<lt>takuji {at} senchan.jpE<gt>
 
 =head1 SEE ALSO
 
-L<Plack::Middleware::Auth::OAuth>,L<Plack::Session>
+L<Plack::Middleware::Auth::OAuth>
 
 =head1 LICENSE
 
