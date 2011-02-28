@@ -1,0 +1,15 @@
+Source: libplack-middleware-auth-oauth-lite-perl
+Section: perl
+Priority: optional
+Build-Depends: debhelper (>= 5.0.0)
+Build-Depends-Indep: perl (>= 5.8.8-7etch6)
+Maintainer: Nishibayashi <takuji@senchan.jp>
+Standards-Version: 3.7.2
+
+Package: libplack-middleware-auth-oauth-lite-perl
+Architecture: all
+Depends: liboauth-lite-perl
+Description: Yet another OAuth authorization middleware for Plack
+ Plack::Middleware::Auth::OAuth::Lite is Yet another OAuth authorization middleware for Plack
+ .
+ This description was automagically extracted from the module by dh-make-perl.

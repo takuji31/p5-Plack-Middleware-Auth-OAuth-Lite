@@ -34,7 +34,7 @@ Nishibayashi Takuji E<lt>takuji {at} senchan.jpE<gt>
 
 =head1 SEE ALSO
 
-L<Plack::Middleware::Auth::OAuth>,L<Plack::Session>
+L<Plack::Middleware::Auth::OAuth>
 
 =head1 LICENSE
 
