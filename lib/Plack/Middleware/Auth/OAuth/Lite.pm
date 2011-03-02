@@ -107,11 +107,6 @@ sub unauthorized {
     ];
 }
 
-sub create_request {
-    my ( $self, $env ) = @_;
-    return Plack::Request->new($env);
-}
-
 sub verify {
     my ( $self, $method, $params ) = @_;
     my $oauth = OAuth::Lite::ServerUtil->new( strict => 0 );
