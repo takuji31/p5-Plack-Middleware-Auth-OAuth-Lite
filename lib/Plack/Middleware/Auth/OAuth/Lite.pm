@@ -60,20 +60,20 @@ sub prepare_app {
 sub call {
     my ( $self, $env ) = @_;
 
-    return $self->authorize($env) ? $self->app->($env) : $self->unauthorized_callback->($self,$env);
+    return $self->authorize($env) ? $self->app->($env) : $self->unauthorized_callback->( $self, $env );
 }
 
 sub authorize {
     my ( $self, $env ) = @_;
 
-    $self->{env} = $env;
+    $self->env($env);
 
     my $req = $self->req;
 
     #XXX get only?
     my $params = $self->merge_params;
 
-    return unless $self->check_parameters( $params );
+    return unless $self->check_parameters($params);
 
     my $signature_method = $params->get('oauth_signature_method');
     return unless $signature_method;
