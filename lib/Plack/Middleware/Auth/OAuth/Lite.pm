@@ -13,19 +13,14 @@ use Plack::Util::Accessor qw/
     consumer_key
     consumer_secret
     env
-    get_params_from
     unauthorized_callback
+    validate_post
+    validate_header
 /;
 
 use parent qw/Plack::Middleware/;
 
 our $VERSION = '0.01';
-
-our $DEFAULT_GET_PARAMS_FROM = {
-    post_body       => 0,
-    oauth_header    => 1,
-    query_parameter => 1,
-};
 
 sub prepare_app {
     my $self = shift;
@@ -48,13 +43,9 @@ sub prepare_app {
     if($self->check_timestamp_callback && ref($self->check_timestamp_callback) ne 'CODE' ){
         Carp::confess('Parameter check_timestamp_callback should be a code reference');
     }
-    # merge default parameters
-    $self->get_params_from(
-        {
-            %$DEFAULT_GET_PARAMS_FROM,
-            %{$self->get_params_from || {}},
-        }
-    );
+
+    #default value
+    $self->validate_header(1) unless defined $self->validate_header;
 }
 
 sub call {
@@ -140,9 +131,9 @@ sub merge_params {
 
     my $auth_params = $self->parse_auth_header;
 
-    return unless $auth_params || !$self->get_params_from->{oauth_header};
+    return unless $auth_params || !$self->validate_header;
 
-    my $req_params = $self->get_params_from->{post_body}
+    my $req_params = $self->validate_post
         ? $req->parameters->clone
         : $req->query_parameters->clone;
 
@@ -179,10 +170,13 @@ Plack::Middleware::Auth::OAuth::Lite - Yet another OAuth authorization middlewar
   }
   #Get all authentication parameters from the query parameter.
   builder{
-      enable 'Auth::OAuth::Lite', consumer_key => 'abcdefg', consumer_secret => 'hijklmn',
-          get_params_from => {
-              oauth_header => 0,
-          };
+      enable 'Auth::OAuth::Lite', consumer_key => 'abcdefg', consumer_secret => 'hijklmn', validate_header => 0;
+      $app;
+  }
+
+  #Validate post body.
+  builder{
+      enable 'Auth::OAuth::Lite', consumer_key => 'abcdefg', consumer_secret => 'hijklmn', validate_post => 1;
       $app;
   }
 
