@@ -1,7 +1,6 @@
 use inc::Module::Install;
 name 'Plack-Middleware-Auth-OAuth-Lite';
 all_from 'lib/Plack/Middleware/Auth/OAuth/Lite.pm';
-readme_pod_from 'lib/Plack/Middleware/Auth/OAuth/Lite.pm';
 githubmeta;
 
 # requires '';
