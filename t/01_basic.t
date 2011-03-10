@@ -24,7 +24,7 @@ test_psgi builder{
 
     my $req = $consumer->gen_oauth_request(
         method => 'GET',
-        url    => 'http://localhost/',
+        url    => 'http://localhost/?hoge=fuga',
         params => $params,
     );
     $res = $cb->($req);
@@ -39,7 +39,7 @@ test_psgi builder{
     my $cb = shift;
     my $req = $consumer->gen_oauth_request(
         method => 'GET',
-        url    => 'http://localhost/',
+        url    => 'http://localhost/?hoge=fuga',
         params => $params,
     );
     my $res = $cb->($req);
@@ -53,7 +53,7 @@ test_psgi builder{
     my $cb = shift;
     my $req = $consumer->gen_oauth_request(
         method => 'GET',
-        url    => 'http://localhost/',
+        url    => 'http://localhost/?hoge=fuga',
         params => $params,
     );
     my $res = $cb->($req);

@@ -22,6 +22,7 @@ my $params          = {
     oauth_version          => '1.0',
     oauth_signature_method => 'HMAC-SHA1',
     oauth_token            => 'aaaaaaa',
+    hoge                   => 'fuga',
 };
 
 test_psgi builder {
