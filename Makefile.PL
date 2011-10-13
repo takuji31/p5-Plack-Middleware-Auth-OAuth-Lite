@@ -14,4 +14,5 @@ author_tests 'xt';
 build_requires 'Test::More';
 auto_set_repository;
 auto_include;
+auto_install;
 WriteAll;
