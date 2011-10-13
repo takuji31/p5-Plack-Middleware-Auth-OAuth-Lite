@@ -6,7 +6,6 @@ use Carp();
 use OAuth::Lite::Util ();
 use OAuth::Lite::ServerUtil;
 use Plack::Request;
-use Plack::Session;
 use Plack::Util();
 use Plack::Util::Accessor qw/
     check_timestamp_callback
@@ -14,19 +13,14 @@ use Plack::Util::Accessor qw/
     consumer_key
     consumer_secret
     env
-    get_params_from
     unauthorized_callback
+    validate_post
+    validate_header
 /;
 
 use parent qw/Plack::Middleware/;
 
 our $VERSION = '0.01';
-
-our $DEFAULT_GET_PARAMS_FROM = {
-    post_body       => 0,
-    oauth_header    => 1,
-    query_parameter => 1,
-};
 
 sub prepare_app {
     my $self = shift;
@@ -49,32 +43,28 @@ sub prepare_app {
     if($self->check_timestamp_callback && ref($self->check_timestamp_callback) ne 'CODE' ){
         Carp::confess('Parameter check_timestamp_callback should be a code reference');
     }
-    # merge default parameters
-    $self->get_params_from(
-        {
-            %$DEFAULT_GET_PARAMS_FROM,
-            %{$self->get_params_from || {}},
-        }
-    );
+
+    #default value
+    $self->validate_header(1) unless defined $self->validate_header;
 }
 
 sub call {
     my ( $self, $env ) = @_;
 
-    return $self->authorize($env) ? $self->app->($env) : $self->unauthorized_callback->($self,$env);
+    return $self->authorize($env) ? $self->app->($env) : $self->unauthorized_callback->( $self, $env );
 }
 
 sub authorize {
     my ( $self, $env ) = @_;
 
-    $self->{env} = $env;
+    $self->env($env);
 
     my $req = $self->req;
 
     #XXX get only?
     my $params = $self->merge_params;
 
-    return unless $self->check_parameters( $params );
+    return unless $self->check_parameters($params);
 
     my $signature_method = $params->get('oauth_signature_method');
     return unless $signature_method;
@@ -141,9 +131,9 @@ sub merge_params {
 
     my $auth_params = $self->parse_auth_header;
 
-    return unless $auth_params || !$self->get_params_from->{oauth_header};
+    return unless $auth_params || !$self->validate_header;
 
-    my $req_params = $self->get_params_from->{post_body}
+    my $req_params = $self->validate_post
         ? $req->parameters->clone
         : $req->query_parameters->clone;
 
@@ -180,10 +170,13 @@ Plack::Middleware::Auth::OAuth::Lite - Yet another OAuth authorization middlewar
   }
   #Get all authentication parameters from the query parameter.
   builder{
-      enable 'Auth::OAuth::Lite', consumer_key => 'abcdefg', consumer_secret => 'hijklmn',
-          get_params_from => {
-              oauth_header => 0,
-          };
+      enable 'Auth::OAuth::Lite', consumer_key => 'abcdefg', consumer_secret => 'hijklmn', validate_header => 0;
+      $app;
+  }
+
+  #Validate post body.
+  builder{
+      enable 'Auth::OAuth::Lite', consumer_key => 'abcdefg', consumer_secret => 'hijklmn', validate_post => 1;
       $app;
   }
 
@@ -197,7 +190,7 @@ Nishibayashi Takuji E<lt>takuji {at} senchan.jpE<gt>
 
 =head1 SEE ALSO
 
-L<Plack::Middleware::Auth::OAuth>,L<Plack::Session>
+L<Plack::Middleware::Auth::OAuth>
 
 =head1 LICENSE
 
